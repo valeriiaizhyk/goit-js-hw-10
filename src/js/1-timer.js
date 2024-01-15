@@ -14,6 +14,7 @@ const minsTimer = document.querySelector('span[data-minutes]');
 const secsTimer = document.querySelector('span[data-seconds]');
 
 let userSelectedDate = null;
+let timer = null;
 
 const options = {
   enableTime: true,
@@ -31,35 +32,29 @@ const options = {
     } else {
       btnStart.disabled = false;
       userSelectedDate = selectedDates[0];
+      resetTimer();
     }
   },
 };
 
 const datePicker = flatpickr(input, options);
 
-input.addEventListener('focus', () => {
-  datePicker.config.defaultDate = new Date();
-});
-
 input.addEventListener('change', () => {
   btnStart.disabled = true;
-  clearInterval(timer);
-  daysTimer.textContent = '00';
-  hoursTimer.textContent = '00';
-  minsTimer.textContent = '00';
-  secsTimer.textContent = '00';
+  resetTimer();
 });
 
 input.addEventListener('focus', () => {
   if (!timer) {
     datePicker.config.defaultDate = new Date();
+    resetTimer();
   }
 });
 
 btnStart.addEventListener('click', startCountdown);
 
 function startCountdown() {
-  const timer = setInterval(() => {
+  timer = setInterval(() => {
     const selectedDateTime = userSelectedDate.getTime();
     const currentDateTime = new Date().getTime();
     const different = selectedDateTime - currentDateTime;
@@ -71,10 +66,20 @@ function startCountdown() {
     minsTimer.textContent = addLeadingZero(minutes);
     secsTimer.textContent = addLeadingZero(seconds);
 
-    if (different <= 0) {
+    if (different < 0) {
       clearInterval(timer);
+      resetTimer();
     }
   }, 1000);
+}
+
+function resetTimer() {
+  clearInterval(timer);
+  timer = null;
+  daysTimer.textContent = '00';
+  hoursTimer.textContent = '00';
+  minsTimer.textContent = '00';
+  secsTimer.textContent = '00';
 }
 
 function addLeadingZero(value) {
