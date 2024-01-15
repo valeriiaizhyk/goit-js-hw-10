@@ -13,7 +13,7 @@ const hoursTimer = document.querySelector('span[data-hours]');
 const minsTimer = document.querySelector('span[data-minutes]');
 const secsTimer = document.querySelector('span[data-seconds]');
 
-let userSelectedDate = '';
+let userSelectedDate = null;
 
 const options = {
   enableTime: true,
@@ -41,28 +41,43 @@ input.addEventListener('focus', () => {
   datePicker.config.defaultDate = new Date();
 });
 
+input.addEventListener('change', () => {
+  btnStart.disabled = true;
+  clearInterval(timer);
+  daysTimer.textContent = '00';
+  hoursTimer.textContent = '00';
+  minsTimer.textContent = '00';
+  secsTimer.textContent = '00';
+});
+
+input.addEventListener('focus', () => {
+  if (!timer) {
+    datePicker.config.defaultDate = new Date();
+  }
+});
+
 btnStart.addEventListener('click', startCountdown);
 
 function startCountdown() {
   const timer = setInterval(() => {
     const selectedDateTime = userSelectedDate.getTime();
     const currentDateTime = new Date().getTime();
-    const different = selectedDateTime - currentDateTime - 1000;
+    const different = selectedDateTime - currentDateTime;
     const result = convertMs(different);
 
     const { days, hours, minutes, seconds } = result;
-    daysTimer.textContent = pad(days);
-    hoursTimer.textContent = pad(hours);
-    minsTimer.textContent = pad(minutes);
-    secsTimer.textContent = pad(seconds);
+    daysTimer.textContent = addLeadingZero(days);
+    hoursTimer.textContent = addLeadingZero(hours);
+    minsTimer.textContent = addLeadingZero(minutes);
+    secsTimer.textContent = addLeadingZero(seconds);
 
-    if (days <= 0 && hours <= 0 && minutes <= 0 && seconds <= 0) {
+    if (different <= 0) {
       clearInterval(timer);
     }
   }, 1000);
 }
 
-function pad(value) {
+function addLeadingZero(value) {
   return String(value).padStart(2, '0');
 }
 

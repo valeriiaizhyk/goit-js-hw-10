@@ -9,14 +9,14 @@ form.addEventListener('submit', onGeneratePromise);
 function onGeneratePromise(event) {
   event.preventDefault();
 
-  const delay = form.delay.value;
-  const userChoise = form.state.value;
+  const delay = parseInt(form.delay.value, 10);
+  const userChoice = form.state.value;
 
   const promise = new Promise((resolve, reject) => {
     setTimeout(() => {
-      if (userChoise === 'fulfilled') {
+      if (userChoice === 'fulfilled') {
         resolve(delay);
-      } else if (userChoise === 'rejected') {
+      } else if (userChoice === 'rejected') {
         reject(delay);
       }
     }, delay);
@@ -24,13 +24,13 @@ function onGeneratePromise(event) {
 
   promise.then(delay =>
     iziToast.success({
-      message: '`✅ Fulfilled promise in ${delay}ms`;',
+      message: `✅ Fulfilled promise in ${delay}ms`,
       position: 'topRight',
     })
   );
   promise.catch(delay =>
     iziToast.error({
-      message: '`❌ Rejected promise in ${delay}ms`;',
+      message: `❌ Rejected promise in ${delay}ms`,
       position: 'topRight',
     })
   );
